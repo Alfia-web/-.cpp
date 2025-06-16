@@ -7,6 +7,8 @@
 
 using namespace std;
 
+double resultAnalis(const string& expression, bool& error);
+
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
     case '+': return a + b;
@@ -52,7 +54,7 @@ double firstAnalis(const string expression, int& i, bool& error)
     {
         i++;
 
-        double value = 0;
+        double value = resultAnalis(expression, error);
 
         if (i >= expression.size() || expression[i] != ')')
         {
@@ -69,7 +71,8 @@ double firstAnalis(const string expression, int& i, bool& error)
         double value = firstAnalis(expression, i, error);
         return operations('#', 0, value, error);
     }
-    else if (isdigit(expression[i] || expression[i] == '.'))
+    else if (i < expression.size() && (isdigit(expression[i]) || expression[i] == '.'))
+
     {
         return readNumber(expression, i);
     }
@@ -78,8 +81,53 @@ double firstAnalis(const string expression, int& i, bool& error)
         error = true; 
         return 0;
     }
+    
+}
+
+double resultAnalis(const string& expression, bool& error) {
+    error = false;
+    int i = 0;
+
+    double result = firstAnalis(expression, i, error);
+    if (error) return 0;
+
+    while (i < expression.length()) {
+        while (i < expression.length() && isspace(expression[i])) i++;
+
+        if (i >= expression.length()) break;
+
+        char op = expression[i++];
+
+      
+        while (i < expression.length() && isspace(expression[i])) i++;
+
+        double nextNumber = firstAnalis(expression, i, error);
+        if (error) return 0;
+
+        result = operations(op, result, nextNumber, error);
+        if (error) return 0;
+    }
+
+    return result;
+}
+
+
+void runAnalis(){
+    string input;
+    cout << "Введите выражение" << endl;
+    getline(cin, input);
+    
+    bool error = false;
+    double result = resultAnalis(input, error);
+    if (!error)
+        cout << "Результат: " << result << endl;
     if (error) {
         cout << "Ошибка в выражении" << endl;
     }
 }
 
+int main() {
+    setlocale(LC_ALL, "ru");
+    cout << "Калькулятор" << endl;
+    runAnalis();
+}
