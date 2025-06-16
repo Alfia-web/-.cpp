@@ -7,7 +7,7 @@
 
 using namespace std;
 
-double resultAnalis(const string& expression, bool& error);
+double resultAnalis(const string& expression, int& i, bool& error);
 
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
@@ -54,7 +54,7 @@ double firstAnalis(const string expression, int& i, bool& error)
     {
         i++;
 
-        double value = resultAnalis(expression, error);
+        double value = resultAnalis(expression, i, error);
 
         if (i >= expression.size() || expression[i] != ')')
         {
@@ -84,28 +84,33 @@ double firstAnalis(const string expression, int& i, bool& error)
     
 }
 
-double resultAnalis(const string& expression, bool& error) {
+double resultAnalis(const string& expression, int& i, bool& error) {
     error = false;
-    int i = 0;
-
+    //
     double result = firstAnalis(expression, i, error);
-    if (error) return 0;
+    if (error)
+        return 0;
 
     while (i < expression.length()) {
-        while (i < expression.length() && isspace(expression[i])) i++;
+        while (i < expression.length() && isspace(expression[i])) 
+            i++;
 
-        if (i >= expression.length()) break;
+        if (i >= expression.length() || expression[i]==')')
+            break;
 
         char op = expression[i++];
 
       
-        while (i < expression.length() && isspace(expression[i])) i++;
+        while (i < expression.length() && isspace(expression[i]))
+            i++;
 
         double nextNumber = firstAnalis(expression, i, error);
-        if (error) return 0;
+        if (error)
+            return 0;
 
         result = operations(op, result, nextNumber, error);
-        if (error) return 0;
+        if (error)
+            return 0;
     }
 
     return result;
@@ -118,7 +123,8 @@ void runAnalis(){
     getline(cin, input);
     
     bool error = false;
-    double result = resultAnalis(input, error);
+    int i = 0;
+    double result = resultAnalis(input,i,  error);
     if (!error)
         cout << "Результат: " << result << endl;
     if (error) {
