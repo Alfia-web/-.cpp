@@ -44,44 +44,51 @@ double readNumber(const string& expression, int& i) {
     return stod(value);
 }
 
-
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
 double firstAnalis(const string expression, int& i, bool& error)
 {
     while (i < expression.length() && isspace(expression[i]))
         i++;
-
+    bool negative = false;
+    if (i < expression.size() && expression[i] == '-' &&
+        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1])))
+    {
+        negative = true;
+        i++;
+        while (i < expression.length() && isspace(expression[i]))
+            i++;
+    }
     if (i < expression.size() && expression[i] == '(')
     {
         i++;
-
         double value = resultAnalis(expression, i, error);
-
         if (i >= expression.size() || expression[i] != ')')
         {
             error = true;
             return 0;
         }
         i++;
-        return value;
+        return negative ? -value : value;
     }
-
     else if (i < expression.size() && expression[i] == '#')
     {
         i++;
         double value = firstAnalis(expression, i, error);
-        return operations('#', 0, value, error);
+        double result = operations('#', 0, value, error);
+        return negative ? -result : result;
     }
     else if (i < expression.size() && (isdigit(expression[i]) || expression[i] == '.'))
-
     {
-        return readNumber(expression, i);
+        double number = readNumber(expression, i);
+        return negative ? -number : number;
     }
     else
     {
         error = true; 
         return 0;
     }
-    
 }
 
 double resultAnalis(const string& expression, int& i, bool& error) {
@@ -115,7 +122,6 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 
     return result;
 }
-
 
 void runAnalis(){
     string input;
