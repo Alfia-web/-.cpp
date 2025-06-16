@@ -5,9 +5,9 @@
 #include <vector>
 #include <ctime>
 
-using namespace std; 
+using namespace std;
 
-double applyOp(char op, double b, double a, bool& error) {
+double operations(char op, double a, double b, bool& error) {
     switch (op) {
     case '+': return a + b;
     case '-': return a - b;
@@ -34,131 +34,52 @@ double applyOp(char op, double b, double a, bool& error) {
     }
 }
 
-
-bool isDigit(char ch) {
-    if (ch >= '0' && ch <= '9') {
-        return true;
+double readNumber(const string& expression, int& i) {
+    string value;
+    while (i < expression.length() && (isdigit(expression[i]) || expression[i] == '.')) {
+        value += expression[i++];
     }
-    return false;
-
+    return stod(value);
 }
 
-bool simplIdentif(const string& currentString, int& position, bool& isError, vector<string>& identificator) {
-    string number;
 
-    //проверка - строка не закончилась и проверяеый символ - буква
-    while (position < currentString.size() && isDigit(currentString[position])) {
-        number += currentString[position];
-        position++;
-    }
-    if (!number.empty())
-    {
-        identificator.push_back(number);
-        return true;
-    }
-    //обработка ошибок
-    isError = true;
-    position++;
-    return false;
-}
-
-bool operatorSign(const string& currentString, int& position, bool& isError)
+double firstAnalis(const string expression, int& i, bool& error)
 {
-    //проверка - строка не закончилась и проверяеый символ - оператор
-    if (position < currentString.size() && (currentString[position] == '+' || currentString[position] == '-' || currentString[position] == '*' || currentString[position] == '/' || currentString[position] == '#' || currentString[position] == ' '))
+    while (i < expression.length() && isspace(expression[i]))
+        i++;
+
+    if (i < expression.size() && expression[i] == '(')
     {
-        position++;
-        return true;
-    }
-    //обработка ошибок
-    isError = true;
-    position++;
-    return false;
-}
+        i++;
 
-bool simplExpression(const string& currentString, int& position, bool& isError, vector<string>& identificator, vector<string>& expression) {
-    //проверка на пустую строку
-    if (currentString.empty()) {
-        cout << "Ошибка: у вас пустая строка" << endl;
-        isError = true;
-        return false;
-    }
+        double value = 0;
 
-    bool result = simplIdentif(currentString, position, isError, identificator);
-    bool flag = true;
-    string currentExpression;
-
-    while (position < currentString.size()) {
-        //проверка ожидания и корректности оператора
-        if (flag) {
-            result &= operatorSign(currentString, position, isError);
-            flag = false;
-        }
-        else {
-            //проверка ожидания и корректности простого идентификатора
-            result &= simplIdentif(currentString, position, isError, identificator);
-            flag = true;
-
-            //формирование простых выражений
-            if (identificator.size() >= 2) {
-                currentExpression = identificator[identificator.size() - 2] + currentString[position - 2] + identificator[identificator.size() - 1];
-                expression.push_back(currentExpression);
-            }
-        }
-    }
-    return result;
-}
-
-bool Analis(const string& currentString, int& position, bool& isError, vector<string>& identificator, vector<string>& expression) {
-    return simplExpression(currentString, position, isError, identificator, expression);
-}
-
-void runAnalis() {
-    int position = 0;
-    bool isError = true;
-    string currentString;
-    vector<string> identificator;
-    vector<string> expression;
-
-    cout << "Введите выражение:" << endl;
-
-    getline(cin, currentString);
-
-    if (Analis(currentString, position, isError, identificator, expression) && position == currentString.size()) {
-
-        bool error = false;
-        double result = 0;
-
-        if (identificator.size() > 0)
-            result = stod(identificator[0]);
-
-        for (int i = 1, j = 0; i < identificator.size(); i++, j++)
+        if (i >= expression.size() || expression[i] != ')')
         {
-            char op = currentString[j * 2 + 1];
-            double nextOperand = stod(identificator[i]);
-            result = applyOp(op, nextOperand, result, error);
-            
-            if (error)
-                break;
+            error = true;
+            return 0;
         }
-
-        if (!error)
-            cout << "Ответ:" << " " << result << endl;
+        i++;
+        return value;
     }
-    else {
-        cout << "Ошибка в выражении";
+
+    else if (i < expression.size() && expression[i] == '#')
+    {
+        i++;
+        double value = firstAnalis(expression, i, error);
+        return operations('#', 0, value, error);
+    }
+    else if (isdigit(expression[i] || expression[i] == '.'))
+    {
+        return readNumber(expression, i);
+    }
+    else
+    {
+        error = true; 
+        return 0;
+    }
+    if (error) {
+        cout << "Ошибка в выражении" << endl;
     }
 }
-
-
-int main()
-{
-    setlocale(LC_ALL, "ru");
-
-    cout << "Калькулятор" << endl;
-    runAnalis();
-}
-
-
-
 
