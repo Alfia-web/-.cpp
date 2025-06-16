@@ -7,6 +7,34 @@
 
 using namespace std; 
 
+double applyOp(char op, double b, double a, bool& error) {
+    switch (op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/':
+        if (b == 0) {
+            cout << "Ошибка: деление на ноль\n";
+            error = true;
+            return 0;
+        }
+        return a / b;
+    case '^': return pow(a, b);
+    case '#':
+        if (b < 0) {
+            cout << "Ошибка: корень из отрицательного числа\n";
+            error = true;
+            return 0;
+        }
+        return sqrt(b);
+    default:
+        cout << "Ошибка: неизвестный оператор\n";
+        error = true;
+        return 0;
+    }
+}
+
+
 bool isDigit(char ch) {
     if (ch >= '0' && ch <= '9') {
         return true;
@@ -16,10 +44,16 @@ bool isDigit(char ch) {
 }
 
 bool simplIdentif(const string& currentString, int& position, bool& isError, vector<string>& identificator) {
+    string number;
+
     //проверка - строка не закончилась и проверяеый символ - буква
-    if (position < currentString.size() && isDigit(currentString[position])) {
-        identificator.push_back(string(1, currentString[position]));
+    while (position < currentString.size() && isDigit(currentString[position])) {
+        number += currentString[position];
         position++;
+    }
+    if (!number.empty())
+    {
+        identificator.push_back(number);
         return true;
     }
     //обработка ошибок
@@ -86,50 +120,45 @@ void runAnalis() {
     vector<string> identificator;
     vector<string> expression;
 
-    cout << "Введите выражение для проверки" << endl;
-    cin.ignore();
+    cout << "Введите выражение:" << endl;
+
     getline(cin, currentString);
+
     if (Analis(currentString, position, isError, identificator, expression) && position == currentString.size()) {
 
+        bool error = false;
+        double result = 0;
+
+        if (identificator.size() > 0)
+            result = stod(identificator[0]);
+
+        for (int i = 1, j = 0; i < identificator.size(); i++, j++)
+        {
+            char op = currentString[j * 2 + 1];
+            double nextOperand = stod(identificator[i]);
+            result = applyOp(op, nextOperand, result, error);
+            
+            if (error)
+                break;
+        }
+
+        if (!error)
+            cout << "Ответ:" << " " << result << endl;
+    }
+    else {
+        cout << "Ошибка в выражении";
     }
 }
-
-double applyOp(char op, double b, double a, bool& error) {
-    switch (op) {
-    case '+': return a + b;
-    case '-': return a - b;
-    case '*': return a * b;
-    case '/':
-        if (b == 0) {
-            cout << "Ошибка: деление на ноль\n";
-            error = true;
-            return 0;
-        }
-        return a / b;
-    case '^': return pow(a, b);
-    case '#':
-        if (b < 0) {
-            cout << "Ошибка: корень из отрицательного числа\n";
-            error = true;
-            return 0;
-        }
-        return sqrt(b);
-    default:
-        cout << "Ошибка: неизвестный оператор\n";
-        error = true;
-        return 0;
-    }
-}
-
 
 
 int main()
 {
     setlocale(LC_ALL, "ru");
 
-    cout << "Калькулятор";
-
-
+    cout << "Калькулятор" << endl;
+    runAnalis();
 }
+
+
 
 
