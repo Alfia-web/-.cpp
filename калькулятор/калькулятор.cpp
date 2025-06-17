@@ -6,6 +6,9 @@
 #include <ctime>
 #include <iomanip>
 #include <clocale>
+
+#include <gtest/gtest.h>
+
 using namespace std;
 
 bool exc = false;
