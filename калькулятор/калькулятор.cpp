@@ -8,6 +8,8 @@
 #include <clocale>
 using namespace std;
 
+bool exc = false;
+
 double  resultAnalis(const string& expression, int& i, bool& error);
 //
 double operations(char op, double a, double b, bool& error) {
@@ -18,6 +20,7 @@ double operations(char op, double a, double b, bool& error) {
     case '/':
         if (b == 0) {
             cout << "Ошибка: деление на ноль\n";
+            exc = true;
             error = true;
             return 0;
         }
@@ -226,7 +229,9 @@ void runAnalis() {
         if (!error)
             cout << "Результат: " << result << endl;
         if (error) {
-            cout << "Ошибка в выражении" << endl;
+            if (!exc)
+              cout << "Ошибка в выражении" << endl;
+
         }
     }
 }
