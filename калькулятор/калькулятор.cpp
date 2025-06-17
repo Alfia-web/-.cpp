@@ -19,6 +19,7 @@ double operations(char op, double a, double b, bool& error) {
     case '/':
         if (b == 0) {
             cout << "Ошибка: деление на ноль\n";
+            cout << endl;
             exc = true;
             error = true;
             return 0;
@@ -28,15 +29,12 @@ double operations(char op, double a, double b, bool& error) {
     case '#':
         if (b < 0) {
             cout << "Ошибка: корень из отрицательного числа\n";
+            cout << endl;
             exc = true;
             error = true;
             return 0;
         }
         return sqrt(b);
-    default:
-        cout << "Ошибка: неизвестный оператор\n";
-        error = true;
-        return 0;
     }
 }
 
@@ -250,6 +248,7 @@ void runAnalis() {
     while (true) {
         string input;
         cout << "Введите выражение" << endl;
+        cout << "> ";
         getline(cin, input);
         if (input == "exit")
             break;
@@ -261,11 +260,15 @@ void runAnalis() {
         bool error = false;
         int i = 0;
         double result = resultAnalis(input, i, error);
-        if (!error)
+        if (!error) {
             cout << "Результат: " << result << endl;
+            cout << endl;
+        }
         if (error) {
-            if (!exc)
+            if (!exc) {
                 cout << "Ошибка в выражении" << endl;
+                cout << endl;
+            }
         }
     }
 }
@@ -274,6 +277,13 @@ int main() {
     setlocale(LC_ALL, "ru");
     setlocale(LC_NUMERIC, "C");
     cout << "Калькулятор" << endl;
-    cout << "Доступные действия\n";
+    cout << "Доступные действия:\n"
+        << "'+' - сложение\n"
+        << "'-' - вычитание\n"
+        << "'*' - умножение\n"
+        << "'/' - деление\n"
+        << "'^' - возведение в степень\n"
+        << "'#' - извлечение корня\n"
+        << endl;
     runAnalis();
 }
