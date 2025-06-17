@@ -28,6 +28,7 @@ double operations(char op, double a, double b, bool& error) {
     case '#':
         if (b < 0) {
             cout << "Ошибка: корень из отрицательного числа\n";
+            exc = true;
             error = true;
             return 0;
         }
@@ -186,15 +187,21 @@ double mulDiv(const string& expression, int& i, bool& error) {
     return left;
 }
 
-string replaceMulti(const std::string& expression) {
-    std::string result;
+string replaceMulti(const string& expression) {
+    string result;
     for (size_t i = 0; i < expression.length(); ++i) {
-        if (expression[i] == '(') 
-        {
-            if (i > 0 && (isdigit(expression[i - 1]) || expression[i - 1] == '.')) {
-                result += '*'; 
-            }
+        if (i > 0 && expression[i] == '(' &&
+            (isdigit(expression[i - 1]) || expression[i - 1] == ')')) {
+            result += '*';
         }
+        else if (i > 0 && isdigit(expression[i - 1]) && expression[i] == '(') {
+            result += '*';
+        }
+        else if (i > 0 && expression[i - 1] == ')' &&
+            (isdigit(expression[i]) || expression[i] == '.')) {
+            result += '*';
+        }
+
         result += expression[i];
     }
     return result;
