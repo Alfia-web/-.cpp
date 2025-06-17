@@ -8,8 +8,8 @@
 #include <clocale>
 using namespace std;
 
-double resultAnalis(const string& expression, int& i, bool& error);
-
+double  resultAnalis(const string& expression, int& i, bool& error);
+//
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
     case '+': return a + b;
@@ -48,11 +48,17 @@ double readNumber(const string& expression, int& i) {
 bool isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
-double firstAnalis(const string expression, int& i, bool& error)
+
+double mulDiv(const string& expression, int& i, bool& error);
+double stepen(const string& expression, int& i, bool& error);
+
+double firstAnalis(const string& expression, int& i, bool& error)
 {
     while (i < expression.length() && isspace(expression[i]))
         i++;
+
     bool negative = false;
+
     if (i < expression.size() && expression[i] == '-' &&
         (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1])))
     {
@@ -122,39 +128,91 @@ double firstAnalis(const string expression, int& i, bool& error)
     }
 }
 
-double resultAnalis(const string& expression, int& i, bool& error) {
-    error = false;
+double stepen(const string& expression, int& i, bool& error) {
+    double left = firstAnalis(expression, i, error);
 
-    double result = firstAnalis(expression, i, error);
     if (error)
         return 0;
 
-    while (i < expression.length()) {
-        while (i < expression.length() && isspace(expression[i])) 
-            i++;
-
-        if (i >= expression.length() || expression[i]==')')
-            break;
-
-        char op = expression[i++];
-
-      
+    while (i < expression.length())
+    {
         while (i < expression.length() && isspace(expression[i]))
             i++;
 
-        double nextNumber = firstAnalis(expression, i, error);
-        if (error)
-            return 0;
-
-        result = operations(op, result, nextNumber, error);
-        if (error)
-            return 0;
+        if (i < expression.length() && expression[i] == '^')
+        {
+            i++;
+            double right = stepen(expression, i, error);
+            if (error)
+                return 0;
+            left = operations('^', left, right, error);
+            if (error)
+                return 0;
+        }
+        else break;
     }
-
-    return result;
+    return left;
 }
 
-void runAnalis(){
+
+double mulDiv(const string& expression, int& i, bool& error) {
+    double left = stepen(expression, i, error);
+
+    if (error)
+        return 0;
+
+    while (i < expression.length())
+    {
+        while (i < expression.length() && isspace(expression[i]))
+            i++;
+
+        if (i < expression.length() && (expression[i] == '*' || expression[i]=='/'))
+        {
+            char op = expression[i++];
+            double right = stepen(expression, i, error);
+            if (error)
+                return 0;
+            left = operations(op, left, right, error);
+            if (error)
+                return 0;
+        }
+        else break;
+    }
+    return left;
+}
+
+
+double  resultAnalis(const string& expression, int& i, bool& error) {
+    double left = mulDiv(expression, i, error);
+
+    if (error)
+        return 0;
+
+    while (i < expression.length())
+    {
+        while (i < expression.length() && isspace(expression[i]))
+            i++;
+
+        if (i < expression.length() && (expression[i] == '+' || expression[i] == '-'))
+        {
+            
+            char op = expression[i++];
+            double right = mulDiv(expression, i, error);
+            if (error)
+                return 0;
+            left = operations(op, left, right, error);
+            if (error)
+                return 0;
+        }
+        else break;
+    }
+    return left;
+}
+
+
+
+
+void runAnalis() {
     while (true) {
         string input;
         cout << "Введите выражение" << endl;
@@ -163,6 +221,7 @@ void runAnalis(){
             break;
         bool error = false;
         int i = 0;
+        //double result = firstAnalis(input, i, error);
         double result = resultAnalis(input, i, error);
         if (!error)
             cout << "Результат: " << result << endl;
