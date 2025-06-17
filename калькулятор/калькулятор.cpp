@@ -12,7 +12,7 @@ using namespace std;
 bool exc = false;
 
 double  resultAnalis(const string& expression, int& i, bool& error);
-//
+
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
     case '+': return a + b;
@@ -50,10 +50,15 @@ double readNumber(const string& expression, int& i) {
 }
 
 bool isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '#';
+}
+
+bool isValidSimbol(char c) {
+    return isdigit(c) || c == '.' || c == '#' || isOperator(c) || c == '(' || c == ')' || isspace(c);
 }
 
 double mulDiv(const string& expression, int& i, bool& error);
+
 double stepen(const string& expression, int& i, bool& error);
 
 double firstAnalis(const string& expression, int& i, bool& error)
@@ -73,11 +78,22 @@ double firstAnalis(const string& expression, int& i, bool& error)
     }
     if (i < expression.size() && expression[i] == '(')
     {
-        i++;
-        double value = resultAnalis(expression, i, error);
-        if (i >= expression.size() || expression[i] != ')')
+        if (i > 0)
         {
-            error = true;
+            char prevChar = expression[i - 1];
+            if (isdigit(prevChar))
+            {
+                error = true;
+                return 0;
+            }
+        }
+        i++; 
+
+        double value = resultAnalis(expression, i, error);
+        if (error) return 0;
+
+        if (i >= expression.size() || expression[i] != ')') {
+            error = true; 
             return 0;
         }
         i++;
@@ -158,7 +174,6 @@ double stepen(const string& expression, int& i, bool& error) {
     return left;
 }
 
-
 double mulDiv(const string& expression, int& i, bool& error) {
     double left = stepen(expression, i, error);
 
@@ -169,7 +184,6 @@ double mulDiv(const string& expression, int& i, bool& error) {
     {
         while (i < expression.length() && isspace(expression[i]))
             i++;
-
         if (i < expression.length() && (expression[i] == '*' || expression[i]=='/'))
         {
             char op = expression[i++];
@@ -185,8 +199,30 @@ double mulDiv(const string& expression, int& i, bool& error) {
     return left;
 }
 
+string replaceMulti(const std::string& expression) {
+    std::string result;
+    for (size_t i = 0; i < expression.length(); ++i) {
+        if (expression[i] == '(') 
+        {
+            if (i > 0 && (isdigit(expression[i - 1]) || expression[i - 1] == '.')) {
+                result += '*'; 
+            }
+        }
+        result += expression[i];
+    }
+    return result;
+}
 
-double  resultAnalis(const string& expression, int& i, bool& error) {
+bool validateExpression(const string& expression) {
+    for (char c : expression) {
+        if (!isValidSimbol (c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+double resultAnalis(const string& expression, int& i, bool& error) {
     double left = mulDiv(expression, i, error);
 
     if (error)
@@ -221,16 +257,20 @@ void runAnalis() {
         getline(cin, input);
         if (input == "exit")
             break;
+
+        if (!validateExpression(input)) {
+            continue;
+        }
+        string processedInput = replaceMulti(input);
+
         bool error = false;
         int i = 0;
-        //double result = firstAnalis(input, i, error);
-        double result = resultAnalis(input, i, error);
+        double result = resultAnalis(processedInput, i, error);
         if (!error)
             cout << "Результат: " << result << endl;
         if (error) {
             if (!exc)
               cout << "Ошибка в выражении" << endl;
-
         }
     }
 }
