@@ -181,7 +181,6 @@ double mulDiv(const string& expression, int& i, bool& error) {
     return left;
 }
 
-
 double  resultAnalis(const string& expression, int& i, bool& error) {
     double left = mulDiv(expression, i, error);
 
@@ -208,9 +207,6 @@ double  resultAnalis(const string& expression, int& i, bool& error) {
     }
     return left;
 }
-
-
-
 
 void runAnalis() {
     while (true) {
