@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 #include <ctime>
-
+#include <iomanip>
+#include <clocale>
 using namespace std;
 
 double resultAnalis(const string& expression, int& i, bool& error);
@@ -81,19 +82,49 @@ double firstAnalis(const string expression, int& i, bool& error)
     }
     else if (i < expression.size() && (isdigit(expression[i]) || expression[i] == '.'))
     {
+        bool hasPoint = false;
+        int start = i;
+
+        if (expression[i] == '.' && (i + 1 >= expression.size() || !isdigit(expression[i + 1])))
+        {
+            error = true;
+            return 0;
+        }
+
+        while (i < expression.size() && (isdigit(expression[i]) || expression[i] == '.'))
+        {
+            if (expression[i] == '.')
+            {
+                if (hasPoint) 
+                {
+                    error = true;
+                    return 0;
+                }
+                hasPoint = true;
+            }
+            i++;
+        }
+
+        if (i > start && expression[i - 1] == '.')
+        {
+            error = true;
+            return 0;
+        }
+
+        i = start;
         double number = readNumber(expression, i);
         return negative ? -number : number;
     }
     else
     {
-        error = true; 
+        error = true;
         return 0;
     }
 }
 
 double resultAnalis(const string& expression, int& i, bool& error) {
     error = false;
-    //
+
     double result = firstAnalis(expression, i, error);
     if (error)
         return 0;
@@ -124,22 +155,26 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 }
 
 void runAnalis(){
-    string input;
-    cout << "Введите выражение" << endl;
-    getline(cin, input);
-    
-    bool error = false;
-    int i = 0;
-    double result = resultAnalis(input,i,  error);
-    if (!error)
-        cout << "Результат: " << result << endl;
-    if (error) {
-        cout << "Ошибка в выражении" << endl;
+    while (true) {
+        string input;
+        cout << "Введите выражение" << endl;
+        getline(cin, input);
+        if (input == "exit")
+            break;
+        bool error = false;
+        int i = 0;
+        double result = resultAnalis(input, i, error);
+        if (!error)
+            cout << "Результат: " << result << endl;
+        if (error) {
+            cout << "Ошибка в выражении" << endl;
+        }
     }
 }
 
 int main() {
     setlocale(LC_ALL, "ru");
+    setlocale(LC_NUMERIC, "C");
     cout << "Калькулятор" << endl;
     runAnalis();
 }
