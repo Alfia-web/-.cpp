@@ -7,7 +7,8 @@
 
 using namespace std;
 
-double resultAnalis(const string& expression, int& i, bool& error);
+double  resultAnalis(const string& expression, int& i, bool& error);
+
 
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
@@ -84,7 +85,7 @@ double firstAnalis(const string expression, int& i, bool& error)
     
 }
 
-double resultAnalis(const string& expression, int& i, bool& error) {
+double  resultAnalis(const string& expression, int& i, bool& error) {
     error = false;
     //
     double result = firstAnalis(expression, i, error);
@@ -115,6 +116,8 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 
     return result;
 }
+
+
 
 
 void runAnalis(){
