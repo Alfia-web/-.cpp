@@ -217,21 +217,24 @@ bool validateExpression(const string& expression) {
 }
 
 double resultAnalis(const string& expression, int& i, bool& error) {
-    double left = mulDiv(expression, i, error);
+
+    string newExpression = replaceMulti(expression);
+
+    double left = mulDiv(newExpression, i, error);
 
     if (error)
         return 0;
 
-    while (i < expression.length())
+    while (i < newExpression.length())
     {
-        while (i < expression.length() && isspace(expression[i]))
+        while (i < newExpression.length() && isspace(newExpression[i]))
             i++;
 
-        if (i < expression.length() && (expression[i] == '+' || expression[i] == '-'))
+        if (i < newExpression.length() && (newExpression[i] == '+' || newExpression[i] == '-'))
         {
-            
-            char op = expression[i++];
-            double right = mulDiv(expression, i, error);
+
+            char op = newExpression[i++];
+            double right = mulDiv(newExpression, i, error);
             if (error)
                 return 0;
             left = operations(op, left, right, error);
@@ -254,16 +257,15 @@ void runAnalis() {
         if (!validateExpression(input)) {
             continue;
         }
-        string processedInput = replaceMulti(input);
 
         bool error = false;
         int i = 0;
-        double result = resultAnalis(processedInput, i, error);
+        double result = resultAnalis(input, i, error);
         if (!error)
             cout << "Результат: " << result << endl;
         if (error) {
             if (!exc)
-              cout << "Ошибка в выражении" << endl;
+                cout << "Ошибка в выражении" << endl;
         }
     }
 }
@@ -272,5 +274,6 @@ int main() {
     setlocale(LC_ALL, "ru");
     setlocale(LC_NUMERIC, "C");
     cout << "Калькулятор" << endl;
+    cout << "Доступные действия\n";
     runAnalis();
 }
