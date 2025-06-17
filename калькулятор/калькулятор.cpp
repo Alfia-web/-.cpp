@@ -208,6 +208,8 @@ string replaceMulti(const string& expression) {
 bool validateExpression(const string& expression) {
     for (char c : expression) {
         if (!isValidSimbol (c)) {
+            cout << "Ошибка в выражении\n";
+            cout << "\n";
             return false;
         }
     }
