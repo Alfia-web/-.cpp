@@ -4,10 +4,8 @@
 #include <string>
 #include <vector>
 #include <ctime>
-#include <iomanip>
 #include <clocale>
 
-#include <gtest/gtest.h>
 
 using namespace std;
 
@@ -214,8 +212,6 @@ double  resultAnalis(const string& expression, int& i, bool& error) {
     }
     return left;
 }
-
-
 
 
 void runAnalis() {
