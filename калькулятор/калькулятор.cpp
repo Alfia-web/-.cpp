@@ -10,7 +10,7 @@ using namespace std;
 bool exc = false;
 
 double  resultAnalis(const string& expression, int& i, bool& error);
-//
+
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
     case '+': return a + b;
@@ -50,10 +50,13 @@ double readNumber(const string& expression, int& i) {
 bool isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '#';
 }
+
 bool isValidSimbol(char c) {
     return isdigit(c) || c == '.' || c == '#' || isOperator(c) || c == '(' || c == ')' || isspace(c);
 }
+
 double mulDiv(const string& expression, int& i, bool& error);
+
 double stepen(const string& expression, int& i, bool& error);
 
 double firstAnalis(const string& expression, int& i, bool& error)
@@ -169,7 +172,6 @@ double stepen(const string& expression, int& i, bool& error) {
     return left;
 }
 
-
 double mulDiv(const string& expression, int& i, bool& error) {
     double left = stepen(expression, i, error);
 
@@ -180,7 +182,6 @@ double mulDiv(const string& expression, int& i, bool& error) {
     {
         while (i < expression.length() && isspace(expression[i]))
             i++;
-
         if (i < expression.length() && (expression[i] == '*' || expression[i]=='/'))
         {
             char op = expression[i++];
@@ -195,6 +196,7 @@ double mulDiv(const string& expression, int& i, bool& error) {
     }
     return left;
 }
+
 string replaceMulti(const std::string& expression) {
     std::string result;
     for (size_t i = 0; i < expression.length(); ++i) {
@@ -218,7 +220,7 @@ bool validateExpression(const string& expression) {
     return true;
 }
 
-double  resultAnalis(const string& expression, int& i, bool& error) {
+double resultAnalis(const string& expression, int& i, bool& error) {
     double left = mulDiv(expression, i, error);
 
     if (error)
@@ -266,7 +268,6 @@ void runAnalis() {
         if (error) {
             if (!exc)
               cout << "Ошибка в выражении" << endl;
-
         }
     }
 }
