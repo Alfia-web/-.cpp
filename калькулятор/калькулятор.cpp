@@ -76,21 +76,10 @@ double firstAnalis(const string& expression, int& i, bool& error)
     }
     if (i < expression.size() && expression[i] == '(')
     {
-        if (i > 0)
-        {
-            char prevChar = expression[i - 1];
-            if (isdigit(prevChar))
-            {
-                error = true;
-                return 0;
-            }
-        }
         i++; 
-
         double value = resultAnalis(expression, i, error);
-        if (error) return 0;
-
-        if (i >= expression.size() || expression[i] != ')') {
+        if (i >= expression.size() || expression[i] != ')')
+        {
             error = true; 
             return 0;
         }
