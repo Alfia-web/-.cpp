@@ -12,6 +12,7 @@ bool exc = false;
 double resultAnalis(const string& expression, int& i, bool& error);
 double mulDiv(const string& expression, int& i, bool& error);
 double stepen(const string& expression, int& i, bool& error);
+string replaceMulti(const string& expression);
 
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
@@ -56,15 +57,8 @@ bool isValidSimbol(char c) {
     return isdigit(c) || c == '.' || c == '#' || isOperator(c) || c == '(' || c == ')' || isspace(c);
 }
 
-void skipSpaces(const string& expression, int& i) {
-    while (i < expression.length() && isspace(expression[i]))
-        i++;
-}
-
 double firstAnalis(const string& expression, int& i, bool& error)
 {
-    skipSpaces(expression, i);
-
     bool negative = false;
 
     if (i < expression.size() && expression[i] == '-' &&
@@ -72,7 +66,6 @@ double firstAnalis(const string& expression, int& i, bool& error)
     {
         negative = true;
         i++;
-        skipSpaces(expression, i);
     }
     if (i < expression.size() && expression[i] == '(') //con2
     {
@@ -175,9 +168,6 @@ double stepen(const string& expression, int& i, bool& error) {
 
     while (i < expression.length())
     {
-        while (i < expression.length() && isspace(expression[i]))
-            i++;
-
         if (i < expression.length() && expression[i] == '^')
         {
             i++;
@@ -201,8 +191,6 @@ double mulDiv(const string& expression, int& i, bool& error) {
 
     while (i < expression.length())
     {
-        while (i < expression.length() && isspace(expression[i]))
-            i++;
         if (i < expression.length() && (expression[i] == '*' || expression[i]=='/'))
         {
             char op = expression[i++];
@@ -221,7 +209,12 @@ double mulDiv(const string& expression, int& i, bool& error) {
 string replaceMulti(const string& expression) {
     string result;
     for (int i = 0; i < expression.length(); ++i) {
+        
         if (i > 0 && expression[i] == '(' &&
+            (isdigit(expression[i - 1]) || expression[i - 1] == ')')) {
+            result += '*';
+        }
+        else if (i > 0 && expression[i] == '#' &&
             (isdigit(expression[i - 1]) || expression[i - 1] == ')')) {
             result += '*';
         }
@@ -285,7 +278,9 @@ void runAnalis() {
         cout << "Введите выражение" << endl;
         cout << "> ";
         getline(cin, input);
-      
+
+        input.erase(remove_if(input.begin(), input.end(), ::isspace), input.end());
+
         if (!validateExpression(input)) {
             continue;
         }
