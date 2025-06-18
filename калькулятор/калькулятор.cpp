@@ -9,12 +9,10 @@ using namespace std;
 
 bool exc = false;
 
-
 string replaceMulti(const string& expression);
 double resultAnalis(const string& expression, int& i, bool& error);
 double mulDiv(const string& expression, int& i, bool& error);
 double stepen(const string& expression, int& i, bool& error);
-string replaceMulti(const string& expression);
 
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
@@ -64,18 +62,18 @@ double firstAnalis(const string& expression, int& i, bool& error)
     bool negative = false;
 
     if (i < expression.size() && expression[i] == '-' &&
-        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1]))) //con1
+        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1])))
     {
         negative = true;
         i++;
     }
-    if (i < expression.size() && expression[i] == '(') //con2
+    if (i < expression.size() && expression[i] == '(')
     {
-        i++; 
+        i++;
         double value = resultAnalis(expression, i, error);
-        if (i >= expression.size() || expression[i] != ')') //con3
+        if (i >= expression.size() || expression[i] != ')')
         {
-            error = true; 
+            error = true;
             return 0;
         }
         i++;
@@ -103,7 +101,7 @@ double firstAnalis(const string& expression, int& i, bool& error)
         {
             if (expression[i] == '.')
             {
-                if (hasPoint) 
+                if (hasPoint)
                 {
                     error = true;
                     return 0;
@@ -115,35 +113,6 @@ double firstAnalis(const string& expression, int& i, bool& error)
 
         if (i > start && expression[i - 1] == '.')
         {
-            double resultAnalis(const string & expression, int& i, bool& error);
-            {
-                string newExpression = replaceMulti(expression);
-
-                double left = mulDiv(newExpression, i, error);
-
-                if (error)
-                    return 0;
-
-                while (i < newExpression.length())
-                {
-                    while (i < newExpression.length() && isspace(newExpression[i]))
-                        i++;
-
-                    if (i < newExpression.length() && (newExpression[i] == '+' || newExpression[i] == '-'))
-                    {
-
-                        char op = newExpression[i++];
-                        double right = mulDiv(newExpression, i, error);
-                        if (error)
-                            return 0;
-                        left = operations(op, left, right, error);
-                        if (error)
-                            return 0;
-                    }
-                    else break;
-                }
-                return left;
-            }
             error = true;
             return 0;
         }
@@ -157,10 +126,7 @@ double firstAnalis(const string& expression, int& i, bool& error)
         error = true;
         return 0;
     }
-
 }
-
-
 
 double stepen(const string& expression, int& i, bool& error) {
     double left = firstAnalis(expression, i, error);
@@ -193,7 +159,7 @@ double mulDiv(const string& expression, int& i, bool& error) {
 
     while (i < expression.length())
     {
-        if (i < expression.length() && (expression[i] == '*' || expression[i]=='/'))
+        if (i < expression.length() && (expression[i] == '*' || expression[i] == '/'))
         {
             char op = expression[i++];
             double right = stepen(expression, i, error);
@@ -211,7 +177,7 @@ double mulDiv(const string& expression, int& i, bool& error) {
 string replaceMulti(const string& expression) {
     string result;
     for (int i = 0; i < expression.length(); ++i) {
-        
+
         if (i > 0 && expression[i] == '(' &&
             (isdigit(expression[i - 1]) || expression[i - 1] == ')')) {
             result += '*';
@@ -235,7 +201,7 @@ string replaceMulti(const string& expression) {
 
 bool validateExpression(const string& expression) {
     for (char c : expression) {
-        if (!isValidSimbol (c)) {
+        if (!isValidSimbol(c)) {
             cout << "Ошибка в выражении\n";
             cout << "\n";
             return false;
