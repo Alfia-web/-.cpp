@@ -120,6 +120,35 @@ double firstAnalis(const string& expression, int& i, bool& error)
 
         if (i > start && expression[i - 1] == '.')
         {
+            double resultAnalis(const string & expression, int& i, bool& error);
+            {
+                string newExpression = replaceMulti(expression);
+
+                double left = mulDiv(newExpression, i, error);
+
+                if (error)
+                    return 0;
+
+                while (i < newExpression.length())
+                {
+                    while (i < newExpression.length() && isspace(newExpression[i]))
+                        i++;
+
+                    if (i < newExpression.length() && (newExpression[i] == '+' || newExpression[i] == '-'))
+                    {
+
+                        char op = newExpression[i++];
+                        double right = mulDiv(newExpression, i, error);
+                        if (error)
+                            return 0;
+                        left = operations(op, left, right, error);
+                        if (error)
+                            return 0;
+                    }
+                    else break;
+                }
+                return left;
+            }
             error = true;
             return 0;
         }
@@ -133,6 +162,7 @@ double firstAnalis(const string& expression, int& i, bool& error)
         error = true;
         return 0;
     }
+
 }
 
 
