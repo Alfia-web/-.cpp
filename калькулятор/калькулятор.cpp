@@ -252,8 +252,6 @@ void runAnalis() {
         cout << "Введите выражение" << endl;
         cout << "> ";
         getline(cin, input);
-        if (input == "exit")
-            break;
 
         if (!validateExpression(input)) {
             continue;
