@@ -9,6 +9,8 @@ using namespace std;
 
 bool exc = false;
 
+
+string replaceMulti(const string& expression);
 double resultAnalis(const string& expression, int& i, bool& error);
 double mulDiv(const string& expression, int& i, bool& error);
 double stepen(const string& expression, int& i, bool& error);
