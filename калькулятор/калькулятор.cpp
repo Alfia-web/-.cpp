@@ -9,7 +9,9 @@ using namespace std;
 
 bool exc = false;
 
-double  resultAnalis(const string& expression, int& i, bool& error);
+double resultAnalis(const string& expression, int& i, bool& error);
+double mulDiv(const string& expression, int& i, bool& error);
+double stepen(const string& expression, int& i, bool& error);
 
 double operations(char op, double a, double b, bool& error) {
     switch (op) {
@@ -54,30 +56,29 @@ bool isValidSimbol(char c) {
     return isdigit(c) || c == '.' || c == '#' || isOperator(c) || c == '(' || c == ')' || isspace(c);
 }
 
-double mulDiv(const string& expression, int& i, bool& error);
-
-double stepen(const string& expression, int& i, bool& error);
+void skipSpaces(const string& expression, int& i) {
+    while (i < expression.length() && isspace(expression[i]))
+        i++;
+}
 
 double firstAnalis(const string& expression, int& i, bool& error)
 {
-    while (i < expression.length() && isspace(expression[i]))
-        i++;
+    skipSpaces(expression, i);
 
     bool negative = false;
 
     if (i < expression.size() && expression[i] == '-' &&
-        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1])))
+        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1]))) //con1
     {
         negative = true;
         i++;
-        while (i < expression.length() && isspace(expression[i]))
-            i++;
+        skipSpaces(expression, i);
     }
-    if (i < expression.size() && expression[i] == '(')
+    if (i < expression.size() && expression[i] == '(') //con2
     {
         i++; 
         double value = resultAnalis(expression, i, error);
-        if (i >= expression.size() || expression[i] != ')')
+        if (i >= expression.size() || expression[i] != ')') //con3
         {
             error = true; 
             return 0;
@@ -134,6 +135,8 @@ double firstAnalis(const string& expression, int& i, bool& error)
     }
 }
 
+
+
 double stepen(const string& expression, int& i, bool& error) {
     double left = firstAnalis(expression, i, error);
 
@@ -187,7 +190,7 @@ double mulDiv(const string& expression, int& i, bool& error) {
 
 string replaceMulti(const string& expression) {
     string result;
-    for (size_t i = 0; i < expression.length(); ++i) {
+    for (int i = 0; i < expression.length(); ++i) {
         if (i > 0 && expression[i] == '(' &&
             (isdigit(expression[i - 1]) || expression[i - 1] == ')')) {
             result += '*';
@@ -252,7 +255,7 @@ void runAnalis() {
         cout << "Введите выражение" << endl;
         cout << "> ";
         getline(cin, input);
-
+      
         if (!validateExpression(input)) {
             continue;
         }
