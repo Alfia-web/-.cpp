@@ -71,11 +71,6 @@ double firstAnalis(const string& expression, int& i, bool& error)
     {
         i++;
         double value = resultAnalis(expression, i, error);
-        if (i >= expression.size() || expression[i] != ')')
-        {
-            error = true;
-            return 0;
-        }
         i++;
         return negative ? -value : value;
     }
@@ -135,9 +130,7 @@ double stepen(const string& expression, int& i, bool& error) {
         return 0;
 
     while (i < expression.length()) {
-        while (i < expression.length() && isspace(expression[i]))
-            i++;
-
+ 
         if (i < expression.length() && expression[i] == '^') {
             i++;
             double right = stepen(expression, i, error);
@@ -214,9 +207,6 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 
     while (i < newExpression.length())
     {
-        while (i < newExpression.length() && isspace(newExpression[i]))
-            i++;
-
         if (i < newExpression.length() && (newExpression[i] == '+' || newExpression[i] == '-'))
         {
 
