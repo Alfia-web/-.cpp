@@ -134,17 +134,14 @@ double stepen(const string& expression, int& i, bool& error) {
     if (error)
         return 0;
 
-    while (i < expression.length())
-    {
-        if (i < expression.length() && expression[i] == '^')
-        {
+    while (i < expression.length()) {
+        while (i < expression.length() && isspace(expression[i]))
+            i++;
+
+        if (i < expression.length() && expression[i] == '^') {
             i++;
             double right = stepen(expression, i, error);
-            if (error)
-                return 0;
             left = operations('^', left, right, error);
-            if (error)
-                return 0;
         }
         else break;
     }
@@ -163,11 +160,7 @@ double mulDiv(const string& expression, int& i, bool& error) {
         {
             char op = expression[i++];
             double right = stepen(expression, i, error);
-            if (error)
-                return 0;
             left = operations(op, left, right, error);
-            if (error)
-                return 0;
         }
         else break;
     }
@@ -229,11 +222,7 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 
             char op = newExpression[i++];
             double right = mulDiv(newExpression, i, error);
-            if (error)
-                return 0;
             left = operations(op, left, right, error);
-            if (error)
-                return 0;
         }
         else break;
     }
