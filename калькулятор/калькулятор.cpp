@@ -71,6 +71,11 @@ double firstAnalis(const string& expression, int& i, bool& error)
     {
         i++;
         double value = resultAnalis(expression, i, error);
+        if (i >= expression.size() || expression[i] != ')')
+        {
+            error = true;
+            return 0;
+        }
         i++;
         return negative ? -value : value;
     }
@@ -106,12 +111,6 @@ double firstAnalis(const string& expression, int& i, bool& error)
             i++;
         }
 
-        if (i > start && expression[i - 1] == '.')
-        {
-            error = true;
-            return 0;
-        }
-
         i = start;
         double number = readNumber(expression, i);
         return negative ? -number : number;
@@ -122,6 +121,7 @@ double firstAnalis(const string& expression, int& i, bool& error)
         return 0;
     }
 }
+
 
 double stepen(const string& expression, int& i, bool& error) {
     double left = firstAnalis(expression, i, error);
@@ -179,7 +179,6 @@ string replaceMulti(const string& expression) {
             (isdigit(expression[i]) || expression[i] == '.')) {
             result += '*';
         }
-
         result += expression[i];
     }
     return result;
@@ -200,6 +199,7 @@ double resultAnalis(const string& expression, int& i, bool& error) {
 
     string newExpression = replaceMulti(expression);
 
+    newExpression.erase(remove_if(newExpression.begin(), newExpression.end(), ::isspace), newExpression.end());
     double left = mulDiv(newExpression, i, error);
 
     if (error)
@@ -225,8 +225,6 @@ void runAnalis() {
         cout << "Введите выражение" << endl;
         cout << "> ";
         getline(cin, input);
-
-        input.erase(remove_if(input.begin(), input.end(), ::isspace), input.end());
 
         if (!validateExpression(input)) {
             continue;
