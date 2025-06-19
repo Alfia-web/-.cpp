@@ -62,7 +62,7 @@ double firstAnalis(const string& expression, int& i, bool& error)
     bool negative = false;
 
     if (i < expression.size() && expression[i] == '-' &&
-        (i == 0 || expression[i - 1] == '(' || isOperator(expression[i - 1])))
+        (i == 0 || expression[i - 1] == '('  || isOperator(expression[i - 1])))
     {
         negative = true;
         i++;
